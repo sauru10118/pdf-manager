@@ -1,0 +1,22 @@
+{
+  "name": "pdf-attachment-manager",
+  "version": "2.0.0",
+  "description": "PDF Attachment Manager with Server-Side 2FA Admin Auth, Rate Limiting & Secure Sessions",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "helmet": "^8.3.0",
+    "multer": "^2.2.0",
+    "mysql2": "^3.11.0",
+    "nodemailer": "^6.9.13"
+  }
+}

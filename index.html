@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Manage, attach, preview, and organize your PDF files with custom names, 2FA admin authentication, and offline local storage.">
+    <title>PDF Attachment Manager</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo-area">
+                <div class="logo-icon">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <path d="M9 13h6"/>
+                        <path d="M9 17h6"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="kinetic-gradient" id="app-title">PDF Manager</h1>
+                    <p class="subtitle">Attach, view, and organize your PDF documents</p>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <div class="header-stats">
+                    <div class="stat-pill">
+                        <span class="stat-label">Total Files</span>
+                        <span class="stat-value" id="stat-count">0</span>
+                    </div>
+                    <div class="stat-pill">
+                        <span class="stat-label">Storage Used</span>
+                        <span class="stat-value" id="stat-size">0 KB</span>
+                    </div>
+                </div>
+
+                <!-- User Session Profile Badge -->
+                <div class="user-session-bar" id="user-session-bar">
+                    <div class="user-badge" id="user-badge">
+                        <span class="role-icon" id="role-icon">👤</span>
+                        <span class="user-name-display" id="user-name-display">Guest</span>
+                        <span class="role-tag" id="role-tag">Member</span>
+                    </div>
+                    <button id="logout-btn" class="btn btn-secondary btn-sm" title="Log Out">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
+                        </svg>
+                        Logout
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Kinetic Ticker Ribbon -->
+        <div class="kinetic-ticker-wrap">
+            <div class="kinetic-ticker">
+                <span>⚡ REAL-TIME SECURE PDF ATTACHMENT SYSTEM</span>
+                <span>🛡️ SQLITE PERSISTENT STORAGE</span>
+                <span>🔑 2FA ADMIN AUTHENTICATION</span>
+                <span>👤 FREE MEMBER REGISTRATION</span>
+                <span>📄 INSTANT FULL-SCREEN PREVIEW & DOWNLOAD</span>
+                <span>⚡ REAL-TIME SECURE PDF ATTACHMENT SYSTEM</span>
+                <span>🛡️ SQLITE PERSISTENT STORAGE</span>
+                <span>🔑 2FA ADMIN AUTHENTICATION</span>
+                <span>👤 FREE MEMBER REGISTRATION</span>
+                <span>📄 INSTANT FULL-SCREEN PREVIEW & DOWNLOAD</span>
+            </div>
+        </div>
+
+        <!-- Main Layout -->
+        <main class="main-content">
+            <!-- Upload Section (Admin Only) -->
+            <section class="upload-section admin-only-block" id="upload-section">
+                <div class="section-card">
+                    <h2><span class="step-num">1</span> Attach New PDF</h2>
+                    <form id="upload-form" class="upload-form">
+                        <div class="form-group">
+                            <label for="pdf-name-input">Custom Attachment Name <span class="optional-tag">(Optional)</span></label>
+                            <input type="text" id="pdf-name-input" placeholder="e.g. Q3 Financial Report, Project Spec, Resume..." autocomplete="off">
+                        </div>
+
+                        <div class="dropzone" id="dropzone">
+                            <input type="file" id="pdf-file-input" accept="application/pdf" class="file-input">
+                            <div class="dropzone-content">
+                                <div class="dropzone-icon">
+                                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                        <polyline points="17 8 12 3 7 8"/>
+                                        <line x1="12" y1="3" x2="12" y2="15"/>
+                                    </svg>
+                                </div>
+                                <h3>Drag & Drop your PDF file here</h3>
+                                <p class="dropzone-hint">or <span class="browse-btn">browse files</span> from your device</p>
+                                <span class="selected-file-name" id="selected-file-name"></span>
+                            </div>
+                        </div>
+
+                        <button type="submit" id="attach-btn" class="btn btn-primary btn-block" disabled>
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            Attach PDF File
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Member Read-Only Banner -->
+            <div class="member-info-banner" id="member-info-banner" style="display: none;">
+                <div class="banner-icon">ℹ️</div>
+                <div>
+                    <h3>Member Mode (Read-Only)</h3>
+                    <p>You are logged in as a <strong>Member</strong>. You can search, preview, and download attached PDFs. Contact the <strong>Admin</strong> to upload or manage documents.</p>
+                </div>
+            </div>
+
+            <!-- Attachments Section -->
+            <section class="list-section">
+                <div class="section-card">
+                    <div class="list-header">
+                        <h2><span class="step-num" id="step-num-list">2</span> Attached PDFs</h2>
+                        <div class="search-box">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="search-icon">
+                                <circle cx="11" cy="11" r="8"/>
+                                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                            </svg>
+                            <input type="text" id="search-input" placeholder="Search attached PDFs...">
+                        </div>
+                    </div>
+
+                    <!-- PDF Cards Grid -->
+                    <div class="pdf-grid" id="pdf-grid"></div>
+
+                    <!-- Empty State -->
+                    <div class="empty-state" id="empty-state">
+                        <div class="empty-icon">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14 2z"/>
+                                <path d="M10 12l4 4m0-4l-4 4"/>
+                            </svg>
+                        </div>
+                        <h3>No PDFs Attached Yet</h3>
+                        <p id="empty-state-text">Upload your first PDF file using the attachment section on the left.</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="modal-overlay active" id="login-modal">
+        <div class="modal-container modal-login">
+            
+            <!-- STEP 1: Standard Login Form -->
+            <div id="login-step-credentials">
+                <div class="login-header">
+                    <div class="login-logo-icon">🔒</div>
+                    <h2>Secure Login</h2>
+                    <p>Enter your credentials to access the document system</p>
+                </div>
+
+                <div class="role-selector-tabs">
+                    <button type="button" class="role-tab active" id="tab-admin" data-role="admin">
+                        🛡️ Admin Login (2FA)
+                    </button>
+                    <button type="button" class="role-tab" id="tab-member" data-role="member">
+                        👤 Member Login
+                    </button>
+                </div>
+
+                <form id="login-form" class="login-form">
+                    <div class="form-group">
+                        <label for="username-input">Username</label>
+                        <input type="text" id="username-input" placeholder="Enter username" required autocomplete="username">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password-input">Password</label>
+                        <input type="password" id="password-input" placeholder="Enter password" required autocomplete="current-password">
+                    </div>
+
+                    <div class="login-error" id="login-error" style="display: none;"></div>
+
+                    <button type="submit" class="btn btn-primary btn-block btn-lg" id="login-submit-btn">
+                        Sign In
+                    </button>
+
+                    <p class="register-hint-text" id="register-hint" style="display: none; margin-top: 14px; text-align: center; font-size: 13px; color: #9CA3AF;">
+                        New member? <button type="button" id="show-register-btn" class="btn-text" style="color: #6366F1; font-weight: 600; text-decoration: underline;">Create Member Account</button>
+                    </p>
+                </form>
+            </div>
+
+            <!-- STEP 3: Register Member Screen -->
+            <div id="login-step-register" style="display: none;">
+                <div class="login-header">
+                    <div class="login-logo-icon">👤</div>
+                    <h2>Register Member</h2>
+                    <p>Create a new member account to access documents</p>
+                </div>
+
+                <form id="register-form" class="login-form">
+                    <div class="form-group">
+                        <label for="reg-name-input">Display Name <span class="optional-tag">(Optional)</span></label>
+                        <input type="text" id="reg-name-input" placeholder="e.g. Alex Smith" autocomplete="name">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reg-username-input">Username</label>
+                        <input type="text" id="reg-username-input" placeholder="Choose a username" required autocomplete="username">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="reg-password-input">Password</label>
+                        <input type="password" id="reg-password-input" placeholder="Choose a password (min 4 chars)" required autocomplete="new-password">
+                    </div>
+
+                    <div class="login-error" id="reg-error" style="display: none;"></div>
+
+                    <button type="submit" class="btn btn-primary btn-block btn-lg" id="reg-submit-btn">
+                        Create Member Account
+                    </button>
+
+                    <div class="back-to-login-wrap">
+                        <button type="button" id="back-to-login-from-reg-btn" class="btn-link">← Back to Login</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- STEP 2: Admin 2FA OTP Verification Screen -->
+            <div id="login-step-otp" style="display: none;">
+                <div class="login-header">
+                    <div class="login-logo-icon">🔑</div>
+                    <h2>Admin 2FA Verification</h2>
+                    <p>Enter the 6-digit OTP code sent to Admin Email</p>
+                </div>
+
+                <div class="otp-banner" id="otp-banner">
+                    <div class="otp-email-icon">📩</div>
+                    <div class="otp-email-text">
+                        <span>Verification code dispatched to:</span>
+                        <strong id="otp-sent-email">admin@valar-sec.org</strong>
+                    </div>
+                </div>
+
+                <form id="otp-form" class="login-form">
+                    <div class="otp-input-group">
+                        <input type="text" maxlength="1" class="otp-digit" id="otp-1" pattern="[0-9]" required autocomplete="off">
+                        <input type="text" maxlength="1" class="otp-digit" id="otp-2" pattern="[0-9]" required autocomplete="off">
+                        <input type="text" maxlength="1" class="otp-digit" id="otp-3" pattern="[0-9]" required autocomplete="off">
+                        <input type="text" maxlength="1" class="otp-digit" id="otp-4" pattern="[0-9]" required autocomplete="off">
+                        <input type="text" maxlength="1" class="otp-digit" id="otp-5" pattern="[0-9]" required autocomplete="off">
+                        <input type="text" maxlength="1" class="otp-digit" id="otp-6" pattern="[0-9]" required autocomplete="off">
+                    </div>
+
+                    <div class="login-error" id="otp-error" style="display: none;"></div>
+
+                    <button type="submit" class="btn btn-primary btn-block btn-lg">
+                        Verify OTP Code
+                    </button>
+
+                    <div class="otp-resend-wrap">
+                        <button type="button" id="resend-otp-btn" class="btn-text">Resend Code</button>
+                        <span id="resend-timer" class="resend-timer"></span>
+                    </div>
+
+                    <div class="back-to-login-wrap">
+                        <button type="button" id="back-to-login-btn" class="btn-link">← Back to Login</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- PDF Preview Modal -->
+    <div class="modal-overlay" id="preview-modal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <div class="modal-title-wrap">
+                    <span class="pdf-badge">PDF</span>
+                    <h3 id="modal-pdf-title">Document Preview</h3>
+                </div>
+                <div class="modal-actions">
+                    <a id="modal-download-btn" class="btn btn-secondary btn-sm" download>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7 10 12 15 17 10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Download
+                    </a>
+                    <button id="modal-close-btn" class="btn-icon" aria-label="Close Preview">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"/>
+                            <line x1="6" y1="6" x2="18" y2="18"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-body">
+                <iframe id="pdf-viewer" src="about:blank" title="PDF Viewer"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rename Modal -->
+    <div class="modal-overlay" id="rename-modal">
+        <div class="modal-container modal-sm">
+            <div class="modal-header">
+                <h3>Rename Attachment</h3>
+                <button id="rename-close-btn" class="btn-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <form id="rename-form" class="modal-body modal-padding">
+                <div class="form-group">
+                    <label for="rename-input">Attachment Display Name</label>
+                    <input type="text" id="rename-input" required autocomplete="off">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="rename-cancel-btn" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>

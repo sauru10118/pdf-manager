@@ -1,0 +1,1058 @@
+/* ====================================================
+   PDF Attachment Manager - Claymorphism 3D Theme
+   ==================================================== */
+
+:root {
+    /* Clay Dark Base Colors */
+    --clay-bg: #0B0F19;
+    --clay-surface: #1E293B;
+    --clay-surface-hover: #26334D;
+    --clay-surface-deep: #151D2A;
+    --clay-input: #0F172A;
+
+    /* Clay 3D Shadows */
+    --clay-shadow-card: 
+        14px 20px 40px rgba(0, 0, 0, 0.5), 
+        inset 6px 6px 14px rgba(255, 255, 255, 0.09), 
+        inset -6px -6px 14px rgba(0, 0, 0, 0.6);
+
+    --clay-shadow-card-hover: 
+        18px 26px 48px rgba(0, 0, 0, 0.6), 
+        inset 7px 7px 16px rgba(255, 255, 255, 0.15), 
+        inset -7px -7px 16px rgba(0, 0, 0, 0.7);
+
+    --clay-shadow-btn: 
+        6px 10px 24px rgba(236, 72, 153, 0.4), 
+        inset 3px 3px 6px rgba(255, 255, 255, 0.4), 
+        inset -4px -4px 8px rgba(159, 18, 57, 0.6);
+
+    --clay-shadow-btn-sec: 
+        6px 10px 20px rgba(0, 0, 0, 0.4), 
+        inset 3px 3px 6px rgba(255, 255, 255, 0.12), 
+        inset -4px -4px 8px rgba(0, 0, 0, 0.5);
+
+    --clay-shadow-input: 
+        inset 5px 6px 12px rgba(0, 0, 0, 0.6), 
+        inset -3px -3px 6px rgba(255, 255, 255, 0.06);
+
+    /* Gradients */
+    --grad-primary: linear-gradient(135deg, #EC4899 0%, #8B5CF6 50%, #3B82F6 100%);
+    --grad-primary-hover: linear-gradient(135deg, #F43F5E 0%, #7C3AED 50%, #2563EB 100%);
+    --grad-accent: linear-gradient(135deg, #00F2FE 0%, #4FACFE 50%, #00DF89 100%);
+
+    /* Colors */
+    --text-bright: #FFFFFF;
+    --text-main: #F1F5F9;
+    --text-muted: #94A3B8;
+    --text-dim: #64748B;
+
+    --radius-sm: 14px;
+    --radius-md: 20px;
+    --radius-lg: 28px;
+    --radius-xl: 36px;
+
+    --font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Global Base */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: var(--clay-bg);
+    background-image: url('bg_iit_dholakpur.png');
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-attachment: fixed;
+    color: var(--text-main);
+    font-family: var(--font-family);
+    min-height: 100vh;
+    padding: 2.5rem 1.5rem;
+    line-height: 1.5;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Background overlay for soft clay contrast */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(11, 15, 25, 0.88);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.app-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+/* ====================================================
+   HEADER & CLAY USER BAR
+   ==================================================== */
+.app-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.35rem 2rem;
+    background: var(--clay-surface);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--clay-shadow-card);
+    margin-bottom: 2.25rem;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+}
+
+.logo-icon {
+    width: 54px;
+    height: 54px;
+    border-radius: var(--radius-md);
+    background: var(--grad-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #FFF;
+    box-shadow: 
+        6px 10px 24px rgba(236, 72, 153, 0.4), 
+        inset 3px 3px 6px rgba(255, 255, 255, 0.4), 
+        inset -4px -4px 8px rgba(159, 18, 57, 0.6);
+    transition: var(--transition);
+}
+
+.logo-area:hover .logo-icon {
+    transform: translateY(-3px) scale(1.05);
+}
+
+.app-header h1 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+}
+
+.subtitle {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+}
+
+.header-stats {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.stat-pill {
+    background: var(--clay-surface-deep);
+    padding: 0.55rem 1.25rem;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    box-shadow: var(--clay-shadow-input);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.stat-label {
+    font-size: 0.76rem;
+    color: var(--text-muted);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.stat-value {
+    font-size: 0.9rem;
+    color: #FFF;
+    font-weight: 800;
+    background: var(--grad-accent);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* User Session Badge */
+.user-session-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    background: var(--clay-surface-deep);
+    padding: 0.45rem 0.65rem 0.45rem 1.1rem;
+    border-radius: 999px;
+    box-shadow: var(--clay-shadow-input);
+}
+
+.user-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+}
+
+.role-icon {
+    font-size: 1.1rem;
+}
+
+.user-name-display {
+    font-weight: 800;
+    font-size: 0.9rem;
+    color: var(--text-bright);
+}
+
+.role-tag {
+    font-size: 0.68rem;
+    font-weight: 800;
+    padding: 0.25rem 0.7rem;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+}
+
+.role-tag.admin {
+    background: #E11D48;
+    color: #FFF;
+    box-shadow: 
+        3px 5px 12px rgba(225, 29, 72, 0.4), 
+        inset 2px 2px 4px rgba(255, 255, 255, 0.3), 
+        inset -2px -2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.role-tag.member {
+    background: #0284C7;
+    color: #FFF;
+    box-shadow: 
+        3px 5px 12px rgba(2, 132, 199, 0.4), 
+        inset 2px 2px 4px rgba(255, 255, 255, 0.3), 
+        inset -2px -2px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* ====================================================
+   MAIN LAYOUT GRID
+   ==================================================== */
+.main-content {
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: 2rem;
+}
+
+body.is-member .main-content {
+    grid-template-columns: 1fr;
+}
+
+body.is-member .upload-section {
+    display: none !important;
+}
+
+@media (max-width: 992px) {
+    .main-content {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ====================================================
+   3D CLAY SECTION CARDS
+   ==================================================== */
+.section-card {
+    background: var(--clay-surface);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+    box-shadow: var(--clay-shadow-card);
+    transition: var(--transition);
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.section-card:hover {
+    box-shadow: var(--clay-shadow-card-hover);
+}
+
+.section-card h2 {
+    font-size: 1.25rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--text-bright);
+}
+
+.step-num {
+    background: var(--grad-primary);
+    color: #FFF;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    font-size: 0.82rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 
+        3px 5px 12px rgba(236, 72, 153, 0.4), 
+        inset 2px 2px 4px rgba(255, 255, 255, 0.4), 
+        inset -2px -2px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* Member Info Banner */
+.member-info-banner {
+    background: #1E3A8A;
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    margin-bottom: 1.75rem;
+    box-shadow: 
+        10px 15px 30px rgba(0, 0, 0, 0.4), 
+        inset 4px 4px 8px rgba(255, 255, 255, 0.2), 
+        inset -4px -4px 8px rgba(0, 0, 0, 0.4);
+}
+
+.banner-icon {
+    font-size: 2.2rem;
+}
+
+.member-info-banner h3 {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #BFDBFE;
+    margin-bottom: 0.25rem;
+}
+
+.member-info-banner p {
+    font-size: 0.88rem;
+    color: #EFF6FF;
+}
+
+/* ====================================================
+   CLAY INPUTS & FORMS
+   ==================================================== */
+.upload-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.35rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-group label {
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--text-muted);
+}
+
+.optional-tag {
+    font-weight: 400;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+}
+
+input[type="text"], input[type="password"] {
+    background: var(--clay-input);
+    border: none;
+    color: var(--text-bright);
+    padding: 0.95rem 1.25rem;
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-size: 0.95rem;
+    outline: none;
+    box-shadow: var(--clay-shadow-input);
+    transition: var(--transition);
+}
+
+input[type="text"]::placeholder, input[type="password"]::placeholder {
+    color: var(--text-dim);
+}
+
+input[type="text"]:focus, input[type="password"]:focus {
+    box-shadow: 
+        inset 5px 6px 12px rgba(0, 0, 0, 0.7), 
+        0 0 0 3px rgba(139, 92, 246, 0.5);
+    color: #FFF;
+}
+
+/* Clay Dropzone */
+.dropzone {
+    position: relative;
+    border-radius: var(--radius-lg);
+    padding: 2.25rem 1.25rem;
+    text-align: center;
+    background: var(--clay-surface-deep);
+    box-shadow: var(--clay-shadow-input);
+    transition: var(--transition);
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.dropzone:hover, .dropzone.drag-over {
+    background: #172033;
+    box-shadow: 
+        inset 6px 8px 16px rgba(0, 0, 0, 0.7), 
+        0 0 20px rgba(236, 72, 153, 0.3);
+}
+
+.file-input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.dropzone-icon {
+    color: #EC4899;
+    margin-bottom: 0.85rem;
+    transition: transform 0.3s ease;
+}
+
+.dropzone:hover .dropzone-icon {
+    transform: translateY(-6px) scale(1.1);
+    color: #00F2FE;
+}
+
+.dropzone h3 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-bright);
+    margin-bottom: 0.3rem;
+}
+
+.dropzone-hint {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.browse-btn {
+    color: #00F2FE;
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+.selected-file-name {
+    display: block;
+    margin-top: 0.85rem;
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #34D399;
+    word-break: break-all;
+}
+
+/* ====================================================
+   3D CLAY BUTTONS
+   ==================================================== */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.68rem;
+    padding: 0.9rem 1.6rem;
+    border-radius: var(--radius-md);
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 800;
+    cursor: pointer;
+    border: none;
+    transition: var(--transition);
+    text-decoration: none;
+    position: relative;
+}
+
+.btn-primary {
+    background: var(--grad-primary);
+    color: #FFF;
+    box-shadow: var(--clay-shadow-btn);
+}
+
+.btn-primary:hover:not(:disabled) {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 
+        8px 14px 30px rgba(236, 72, 153, 0.5), 
+        inset 4px 4px 8px rgba(255, 255, 255, 0.5), 
+        inset -5px -5px 10px rgba(159, 18, 57, 0.7);
+}
+
+.btn-primary:active:not(:disabled) {
+    transform: translateY(1px) scale(0.98);
+    box-shadow: 
+        3px 5px 12px rgba(236, 72, 153, 0.4), 
+        inset -3px -3px 6px rgba(255, 255, 255, 0.3), 
+        inset 4px 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: grayscale(0.5);
+    box-shadow: none;
+}
+
+.btn-secondary {
+    background: var(--clay-surface-hover);
+    color: var(--text-bright);
+    box-shadow: var(--clay-shadow-btn-sec);
+}
+
+.btn-secondary:hover {
+    background: #334155;
+    transform: translateY(-2px);
+}
+
+.btn-sm {
+    padding: 0.55rem 1.05rem;
+    font-size: 0.83rem;
+    border-radius: var(--radius-sm);
+}
+
+.btn-lg {
+    padding: 1.05rem 1.85rem;
+    font-size: 1rem;
+}
+
+.btn-block {
+    width: 100%;
+}
+
+.btn-icon {
+    background: var(--clay-surface-deep);
+    color: var(--text-muted);
+    width: 38px;
+    height: 38px;
+    border-radius: var(--radius-sm);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border: none;
+    box-shadow: var(--clay-shadow-btn-sec);
+    transition: var(--transition);
+}
+
+.btn-icon:hover {
+    background: #E11D48;
+    color: #FFF;
+    transform: translateY(-2px);
+    box-shadow: 
+        4px 8px 16px rgba(225, 29, 72, 0.4), 
+        inset 2px 2px 4px rgba(255, 255, 255, 0.4), 
+        inset -3px -3px 6px rgba(0, 0, 0, 0.4);
+}
+
+.btn-text, .btn-link {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-family: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.btn-text:hover, .btn-link:hover {
+    color: #00F2FE;
+}
+
+/* ====================================================
+   LIST & GRID SECTION
+   ==================================================== */
+.list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.75rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.search-box {
+    position: relative;
+    min-width: 260px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 1.1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-muted);
+    pointer-events: none;
+}
+
+.search-box input {
+    padding-left: 2.85rem;
+    width: 100%;
+}
+
+.pdf-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 1.5rem;
+}
+
+/* ====================================================
+   3D CLAY PDF CARDS
+   ==================================================== */
+.pdf-card {
+    background: var(--clay-surface);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.1rem;
+    transition: var(--transition);
+    position: relative;
+    box-shadow: var(--clay-shadow-card);
+    border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.pdf-card:hover {
+    transform: translateY(-6px);
+    background: var(--clay-surface-hover);
+    box-shadow: var(--clay-shadow-card-hover);
+}
+
+.card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+}
+
+.pdf-badge {
+    background: #E11D48;
+    color: #FFF;
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 0.25rem 0.7rem;
+    border-radius: 999px;
+    letter-spacing: 0.05em;
+    box-shadow: 
+        3px 5px 12px rgba(225, 29, 72, 0.4), 
+        inset 2px 2px 4px rgba(255, 255, 255, 0.3), 
+        inset -2px -2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.card-title {
+    font-size: 1.08rem;
+    font-weight: 800;
+    color: var(--text-bright);
+    margin-bottom: 0.35rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.card-filename {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 0.85rem;
+}
+
+.card-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    font-weight: 600;
+}
+
+.card-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding-top: 0.85rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.card-actions .btn {
+    flex: 1;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: var(--clay-surface-deep);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--clay-shadow-input);
+}
+
+.empty-icon {
+    color: var(--text-dim);
+    margin-bottom: 1rem;
+}
+
+.empty-state h3 {
+    font-size: 1.15rem;
+    font-weight: 800;
+    color: var(--text-bright);
+    margin-bottom: 0.35rem;
+}
+
+.empty-state p {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    max-width: 420px;
+    margin: 0 auto;
+}
+
+/* ====================================================
+   MODALS (3D CLAY SYSTEM)
+   ==================================================== */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(5, 8, 16, 0.85);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: var(--transition);
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-container {
+    background: var(--clay-surface);
+    border-radius: var(--radius-xl);
+    width: 100%;
+    max-width: 900px;
+    box-shadow: var(--clay-shadow-card-hover);
+    overflow: hidden;
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    animation: modalPop 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalPop {
+    from { transform: scale(0.92) translateY(20px); opacity: 0; }
+    to { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.modal-login {
+    max-width: 450px;
+    padding: 2.25rem;
+}
+
+.modal-sm {
+    max-width: 430px;
+}
+
+.modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.modal-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.modal-title-wrap h3 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--text-bright);
+}
+
+.modal-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.modal-body {
+    padding: 0;
+}
+
+.modal-padding {
+    padding: 1.75rem;
+}
+
+#pdf-viewer {
+    width: 100%;
+    height: 75vh;
+    border: none;
+    background: #FFF;
+}
+
+/* Login Modal Specifics */
+.login-header {
+    text-align: center;
+    margin-bottom: 1.75rem;
+}
+
+.login-logo-icon {
+    font-size: 2.8rem;
+    margin-bottom: 0.6rem;
+}
+
+.login-header h2 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-bright);
+    margin-bottom: 0.25rem;
+}
+
+.login-header p {
+    font-size: 0.88rem;
+    color: var(--text-muted);
+}
+
+.role-selector-tabs {
+    display: flex;
+    gap: 0.5rem;
+    background: var(--clay-surface-deep);
+    padding: 0.4rem;
+    border-radius: var(--radius-md);
+    box-shadow: var(--clay-shadow-input);
+    margin-bottom: 1.5rem;
+}
+
+.role-tab {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    padding: 0.65rem 0.5rem;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 800;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: var(--transition);
+}
+
+.role-tab.active {
+    background: var(--grad-primary);
+    color: #FFF;
+    box-shadow: var(--clay-shadow-btn);
+}
+
+.login-error {
+    background: #991B1B;
+    color: #FEE2E2;
+    padding: 0.75rem 1rem;
+    border-radius: var(--radius-md);
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-align: center;
+    box-shadow: 
+        inset 2px 2px 4px rgba(255, 255, 255, 0.2), 
+        inset -2px -2px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* OTP Banner & Inputs */
+.otp-banner {
+    background: #1E3A8A;
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--clay-shadow-input);
+}
+
+.otp-email-icon { font-size: 1.5rem; }
+.otp-email-text span { display: block; font-size: 0.75rem; color: var(--text-muted); }
+.otp-email-text strong { font-size: 0.88rem; color: #93C5FD; }
+
+.otp-input-group {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}
+
+.otp-digit {
+    width: 48px;
+    height: 54px;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 800;
+    border-radius: var(--radius-md);
+    background: var(--clay-input);
+    border: none;
+    color: #00F2FE;
+    outline: none;
+    box-shadow: var(--clay-shadow-input);
+    transition: var(--transition);
+}
+
+.otp-digit:focus {
+    box-shadow: 
+        inset 5px 6px 12px rgba(0, 0, 0, 0.7), 
+        0 0 0 3px rgba(0, 242, 254, 0.5);
+}
+
+.otp-resend-wrap, .back-to-login-wrap {
+    text-align: center;
+    margin-top: 1.25rem;
+    font-size: 0.85rem;
+}
+
+.resend-timer { color: var(--text-dim); font-size: 0.8rem; margin-left: 0.4rem; }
+
+/* Toast Notifications */
+.toast-container {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.toast {
+    background: var(--clay-surface);
+    border-left: 5px solid #34D399;
+    color: var(--text-bright);
+    padding: 0.95rem 1.5rem;
+    border-radius: var(--radius-md);
+    box-shadow: var(--clay-shadow-card-hover);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+    font-weight: 700;
+    animation: toastIn 0.3s ease;
+}
+
+@keyframes toastIn {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+}
+
+/* ====================================================
+   KINETIC TYPOGRAPHY SYSTEM (CLAY EDITION)
+   ==================================================== */
+
+.kinetic-gradient {
+    background: linear-gradient(
+        90deg,
+        #FF2E93 0%,
+        #FF8A00 18%,
+        #FF0055 36%,
+        #00F2FE 54%,
+        #7928CA 72%,
+        #3B82F6 90%,
+        #FF2E93 100%
+    );
+    background-size: 300% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: kineticColorFlow 5s linear infinite;
+}
+
+@keyframes kineticColorFlow {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.kinetic-heading {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.02em;
+    cursor: default;
+}
+
+.kinetic-char {
+    display: inline-block;
+    transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), filter 0.3s ease;
+    animation: kineticFloatChar 3.5s ease-in-out infinite alternate;
+}
+
+.kinetic-char:hover {
+    transform: translateY(-8px) scale(1.3) rotate(-3deg) !important;
+    filter: drop-shadow(0 4px 10px rgba(0, 242, 254, 0.9));
+    color: #00F2FE;
+}
+
+@keyframes kineticFloatChar {
+    0% { transform: translateY(0px) rotate(0deg); }
+    50% { transform: translateY(-4px) rotate(1.5deg); }
+    100% { transform: translateY(3px) rotate(-1.5deg); }
+}
+
+/* Kinetic Ticker Ribbon */
+.kinetic-ticker-wrap {
+    overflow: hidden;
+    white-space: nowrap;
+    background: var(--clay-surface-deep);
+    padding: 0.45rem 0;
+    margin-bottom: 2rem;
+    border-radius: var(--radius-md);
+    box-shadow: var(--clay-shadow-input);
+}
+
+.kinetic-ticker {
+    display: inline-block;
+    animation: kineticTickerScroll 28s linear infinite;
+}
+
+.kinetic-ticker span {
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-right: 3rem;
+}
+
+@keyframes kineticTickerScroll {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+/* Kinetic Hover Stretch for Card Titles */
+.card-title {
+    transition: letter-spacing 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s ease;
+}
+
+.pdf-card:hover .card-title {
+    letter-spacing: 0.03em;
+}
