@@ -12,6 +12,7 @@ const mysql = require('mysql2/promise');
 class PdfManagerDB {
     constructor() {
         this.pool = null;
+        this.isConnected = false;
     }
 
     /**
@@ -29,6 +30,7 @@ class PdfManagerDB {
             connectionLimit: 10,
             queueLimit: 0,
             charset: 'utf8mb4',
+            connectTimeout: 10000,
         };
 
         // Enable SSL for cloud databases (Aiven, PlanetScale, etc.)
@@ -36,13 +38,19 @@ class PdfManagerDB {
             poolConfig.ssl = { rejectUnauthorized: false };
         }
 
-        this.pool = mysql.createPool(poolConfig);
+        try {
+            this.pool = mysql.createPool(poolConfig);
 
-        // Verify connectivity
-        const conn = await this.pool.getConnection();
-        conn.release();
+            // Verify connectivity
+            const conn = await this.pool.getConnection();
+            conn.release();
 
-        await this._createTables();
+            await this._createTables();
+            this.isConnected = true;
+        } catch (err) {
+            this.isConnected = false;
+            throw err;
+        }
     }
 
     // ========================================
@@ -339,6 +347,7 @@ class PdfManagerDB {
     // SHUTDOWN
     // ========================================
     async close() {
+        this.isConnected = false;
         if (this.pool) {
             await this.pool.end();
         }
