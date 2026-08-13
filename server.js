@@ -42,10 +42,25 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
+// Enable trust proxy for reverse proxies (Render, Heroku, Cloudflare)
+app.set('trust proxy', 1);
+
 // ============================================================
 // 1. INITIALIZE MySQL DATABASE
 // ============================================================
 const database = new PdfManagerDB();
+
+// ============================================================
+// HEALTH CHECK ENDPOINT (Render & Uptime Monitoring)
+// ============================================================
+app.get(['/health', '/api/health'], (req, res) => {
+    res.status(200).json({
+        status: 'ok',
+        uptime: Math.floor(process.uptime()),
+        timestamp: new Date().toISOString(),
+        dbConnected: database.isConnected
+    });
+});
 
 // ============================================================
 // 2. SECURITY MIDDLEWARE STACK
@@ -93,14 +108,28 @@ app.use(cookieParser());
 // Body parser with size limit
 app.use(express.json({ limit: '1mb' }));
 
-// HTTPS redirect in production
+// HTTPS redirect in production (Render compatible)
 if (IS_PRODUCTION) {
     app.use((req, res, next) => {
-        if (req.headers['x-forwarded-proto'] !== 'https') {
+        if (req.path === '/health' || req.path === '/api/health') {
+            return next();
+        }
+        const proto = req.headers['x-forwarded-proto'];
+        if (proto && proto.split(',')[0].trim() === 'http') {
             return res.redirect(301, `https://${req.headers.host}${req.url}`);
         }
         next();
     });
+}
+
+// Database availability check middleware
+function requireDb(req, res, next) {
+    if (!database.isConnected) {
+        return res.status(503).json({
+            error: 'Database connection offline. Please check your DB credentials in environment variables (DB_HOST, DB_USER, DB_PASSWORD, DB_NAME).'
+        });
+    }
+    next();
 }
 
 // ============================================================
@@ -714,6 +743,7 @@ function formatBytes(bytes) {
 const CLEANUP_INTERVAL_MS = 15 * 60 * 1000;
 
 setInterval(async () => {
+    if (!database.isConnected) return;
     try {
         await database.runCleanup();
     } catch (err) {
@@ -766,38 +796,53 @@ process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown);
 
 // ============================================================
-// 17. START SERVER (async — wait for MySQL connection)
+// 17. START SERVER (non-blocking — listens immediately for Render)
 // ============================================================
-async function startServer() {
-    try {
-        await database.initialize();
-        console.log('💾 MySQL database connected (pdfs)');
+async function connectDbWithRetry(retries = 10, delayMs = 5000) {
+    for (let attempt = 1; attempt <= retries; attempt++) {
+        try {
+            await database.initialize();
+            console.log('💾 MySQL database connected successfully.');
 
-        const pdfStats = await database.getPdfStats();
-
-        app.listen(PORT, () => {
-            console.log(`\n🚀 PDF Manager (MySQL Edition) listening on http://localhost:${PORT}`);
-            console.log(`🔒 Admin: ${ADMIN_USERNAME} | Email: ${maskEmail(ADMIN_EMAIL)}`);
-            console.log(`👤 Member: ${MEMBER_USERNAME}`);
-            console.log(`📦 Database: ${pdfStats.count} PDFs stored (${formatBytes(pdfStats.total_size)})`);
-            console.log(`🛡️  Security stack:`);
-            console.log(`   ✅ MySQL persistent storage (connection pool)`);
-            console.log(`   ✅ Helmet security headers`);
-            console.log(`   ✅ Restricted CORS (localhost only)`);
-            console.log(`   ✅ bcrypt password hashing`);
-            console.log(`   ✅ httpOnly + SameSite=Strict session cookies`);
-            console.log(`   ✅ Rate limiting: Login 5/15min, OTP 5/5min`);
-            console.log(`   ✅ Account lockout after ${MAX_ACCOUNT_FAILURES} failures (${LOCKOUT_DURATION_MS / 60000}min)`);
-            console.log(`   ✅ Body size limit: 1MB JSON / 50MB PDF upload`);
-            console.log(`   ✅ Input validation & sanitization`);
-            console.log(`   ✅ DB cleanup every ${CLEANUP_INTERVAL_MS / 60000}min`);
-            console.log(`   ✅ Graceful shutdown with pool close\n`);
-        });
-    } catch (err) {
-        console.error('❌ Failed to start server:', err.message);
-        console.error('   Make sure MySQL is running and credentials in .env are correct.');
-        process.exit(1);
+            try {
+                const pdfStats = await database.getPdfStats();
+                console.log(`📦 Database: ${pdfStats.count} PDFs stored (${formatBytes(pdfStats.total_size)})`);
+            } catch (statErr) {
+                console.warn('⚠️ Could not fetch initial DB stats:', statErr.message);
+            }
+            return true;
+        } catch (err) {
+            console.warn(`⚠️ MySQL Connection attempt ${attempt}/${retries} failed: ${err.message}`);
+            if (attempt < retries) {
+                console.log(`⏱️ Retrying DB connection in ${delayMs / 1000}s...`);
+                await new Promise(res => setTimeout(res, delayMs));
+            } else {
+                console.error('\n❌ Could not connect to MySQL database after multiple attempts.');
+                console.error('👉 TIP FOR RENDER DEPLOYMENT: Set DB_HOST, DB_USER, DB_PASSWORD, and DB_NAME in Render Environment Variables.\n');
+            }
+        }
     }
+    return false;
+}
+
+function startServer() {
+    app.listen(PORT, () => {
+        console.log(`\n🚀 PDF Manager listening on http://localhost:${PORT}`);
+        console.log(`🔒 Admin: ${ADMIN_USERNAME} | Email: ${maskEmail(ADMIN_EMAIL)}`);
+        console.log(`👤 Member: ${MEMBER_USERNAME}`);
+        console.log(`🛡️  Proxy Trust: Enabled (Render & Cloud compatible)`);
+        console.log(`❤️ Health Check Endpoint: http://localhost:${PORT}/health`);
+        console.log(`🛡️  Security stack:`);
+        console.log(`   ✅ Helmet security headers`);
+        console.log(`   ✅ Restricted CORS policy`);
+        console.log(`   ✅ bcrypt password hashing`);
+        console.log(`   ✅ httpOnly + SameSite session cookies`);
+        console.log(`   ✅ Rate limiting & account lockout protection`);
+        console.log(`   ✅ Graceful shutdown with pool close\n`);
+
+        // Connect to database asynchronously without blocking server port binding
+        connectDbWithRetry();
+    });
 }
 
 startServer();
