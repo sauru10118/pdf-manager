@@ -75,7 +75,7 @@ app.use(helmet({
             styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
             fontSrc: ["'self'", "https://fonts.gstatic.com"],
             imgSrc: ["'self'", "data:", "blob:"],
-            frameSrc: ["'self'", "blob:"],
+            frameSrc: ["'self'", "blob:", "data:"],
             connectSrc: ["'self'"],
             objectSrc: ["'none'"],
             baseUri: ["'self'"],
@@ -90,7 +90,7 @@ app.use(helmet({
     crossOriginEmbedderPolicy: false,
     referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
     xContentTypeOptions: true,
-    xFrameOptions: { action: 'deny' },
+    xFrameOptions: { action: 'sameorigin' },
 }));
 
 // Restricted CORS (Allows localhost and public tunneling URLs smoothly)
@@ -156,12 +156,15 @@ if (!ADMIN_USERNAME || !ADMIN_EMAIL) {
 // ============================================================
 const upload = multer({
     storage: multer.memoryStorage(),
-    limits: { fileSize: 50 * 1024 * 1024 },  // 50MB max per file
+    limits: { fileSize: 100 * 1024 * 1024 },  // 100MB max per file
     fileFilter: (req, file, cb) => {
-        if (file.mimetype === 'application/pdf' || file.originalname.toLowerCase().endsWith('.pdf')) {
+        const allowedMimes = ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/gif', 'image/svg+xml'];
+        const allowedExts = ['.pdf', '.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg'];
+        const ext = path.extname(file.originalname).toLowerCase();
+        if (allowedMimes.includes(file.mimetype) || allowedExts.includes(ext)) {
             cb(null, true);
         } else {
-            cb(new Error('Only PDF files are allowed.'), false);
+            cb(new Error('Only PDF and image files (PNG, JPG, WEBP, GIF, SVG) are allowed.'), false);
         }
     }
 });
@@ -659,19 +662,27 @@ app.get('/api/pdfs', requireAuth(), async (req, res) => {
     return res.json({ success: true, pdfs });
 });
 
-// GET /api/pdfs/:id/file — Serve PDF file (authenticated)
+// GET /api/pdfs/:id/file — Serve PDF or Image file (authenticated)
 app.get('/api/pdfs/:id/file', requireAuth(), async (req, res) => {
     const pdf = await database.getPdfFile(req.params.id);
     if (!pdf) {
-        return res.status(404).json({ error: 'PDF not found.' });
+        return res.status(404).json({ error: 'File not found.' });
     }
 
-    const filename = pdf.custom_name.endsWith('.pdf')
-        ? pdf.custom_name
-        : `${pdf.custom_name}.pdf`;
+    const origExt = path.extname(pdf.original_filename || pdf.custom_name).toLowerCase();
+    let contentType = 'application/pdf';
+    if (origExt === '.png') contentType = 'image/png';
+    else if (origExt === '.jpg' || origExt === '.jpeg') contentType = 'image/jpeg';
+    else if (origExt === '.webp') contentType = 'image/webp';
+    else if (origExt === '.gif') contentType = 'image/gif';
+    else if (origExt === '.svg') contentType = 'image/svg+xml';
+
+    const filename = origExt && !pdf.custom_name.toLowerCase().endsWith(origExt)
+        ? `${pdf.custom_name}${origExt}`
+        : pdf.custom_name;
 
     res.set({
-        'Content-Type': 'application/pdf',
+        'Content-Type': contentType,
         'Content-Length': pdf.file_size,
         'Content-Disposition': req.query.download === '1'
             ? `attachment; filename="${filename}"`
